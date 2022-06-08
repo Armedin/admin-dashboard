@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const username = configService.get('MONGODB_USERNAME');
-        const password = configService.get('MONGODB_PASSWORD');
-        const host = configService.get('MONGODB_HOST');
-        const database = configService.get('MONGODB_DATABASE');
-
-        return {
-          uri: `mongodb://${username}:${password}@${host}:27017/${database}?`,
-        };
-      },
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.MYSQL_HOST,
+      port: parseInt(process.env.MYSQL_PORT, 10),
+      username: process.env.MYSQL_USERNAME,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      entities: [__dirname + '/../**/*.entity.{js,ts}'],
+      /**
+       * synchronize: true is dangerous in production!
+       * Could lead to data loss. Should do migrations instead.
+       * see https://github.com/typeorm/typeorm/blob/master/docs/migrations.md
+       */
+      synchronize: true,
     }),
   ],
 })
