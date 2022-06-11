@@ -1,16 +1,16 @@
-import "src/styles/globals.scss";
-import "src/styles/font.scss";
-import dynamic from "next/dynamic";
-import type { AppProps } from "next/app";
-import Layout from "@/components/common/Layout";
-import { useDarkMode } from "@/hooks";
-import { GlobalStyles } from "@kukui/ui";
+import 'src/styles/globals.scss';
+import 'src/styles/font.scss';
+import dynamic from 'next/dynamic';
+import type { AppProps } from 'next/app';
+import Layout from '@/components/common/Layout';
+import { useDarkMode } from '@/hooks';
+import { GlobalStyles, SnackbarProvider } from '@kukui/ui';
 
 function App({ Component, pageProps }: AppProps) {
   useDarkMode();
 
   return (
-    <>
+    <SnackbarProvider>
       <Layout>
         <Component {...pageProps} />
       </Layout>
@@ -22,7 +22,7 @@ function App({ Component, pageProps }: AppProps) {
           flex: 1 1 100%;
         }
       `}</style>
-    </>
+    </SnackbarProvider>
   );
 }
 

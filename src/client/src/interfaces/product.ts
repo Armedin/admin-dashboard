@@ -4,3 +4,8 @@ export interface CreateProduct {
   price: number;
   images?: string[];
 }
+
+export interface ProductProperty {
+  name: string;
+  value: string;
+}

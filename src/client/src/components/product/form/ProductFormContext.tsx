@@ -1,5 +1,6 @@
+import { ProductProperty } from '@/interfaces/product';
 import { FormContainer } from '@kukui/ui';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const ProductFormContext = React.createContext<{
   images: any[];
@@ -7,6 +8,10 @@ const ProductFormContext = React.createContext<{
   appendImage: (image: any) => void;
   removeImage: (image: any) => void;
   onSubmit: (data: any) => void;
+  properties: ProductProperty[];
+  setProperties: (properties: ProductProperty[]) => void;
+  thumbnail: string;
+  setThumbnail: (value: string) => void;
 } | null>(null);
 
 interface ProductFormProviderProps {
@@ -17,15 +22,19 @@ interface ProductFormProviderProps {
 const defaultProduct = {
   title: '',
   description: '',
+  thumbnail: '',
   price: '',
   images: [],
+  properties: [],
 };
 
 export const ProductFormProvider = ({
   children,
   onSubmit,
 }: ProductFormProviderProps) => {
-  const [images, setImages] = React.useState<any[]>([]);
+  const [images, setImages] = useState<any[]>([]);
+  const [properties, setProperties] = useState<ProductProperty[]>([]);
+  const [thumbnail, setThumbnail] = useState('');
 
   const appendImage = (image: any | any[]) => {
     if (Array.isArray(image)) {
@@ -36,15 +45,38 @@ export const ProductFormProvider = ({
   };
 
   const removeImage = image => {
-    const idx = images.findIndex(img => img.image === image.image);
+    const idx = images.findIndex(img => img.preview === image.preview);
     if (idx !== -1) {
       images.splice(idx, 1);
     }
+
     setImages([...images]);
   };
 
+  useEffect(() => {
+    if (thumbnail === '' && images.length) {
+      setThumbnail(images[0].preview);
+    }
+
+    if (
+      (thumbnail !== '' &&
+        images.length > 0 &&
+        images.findIndex(image => image.preview === thumbnail) === -1) ||
+      images.length === 0
+    ) {
+      setThumbnail('');
+    }
+  }, [images, thumbnail]);
+
   const handleSubmit = data => {
-    onSubmit({ ...data, images });
+    onSubmit({
+      ...data,
+      images,
+      thumbnail,
+      properties: properties.filter(
+        property => property.name !== '' && property.value !== ''
+      ),
+    });
   };
 
   return (
@@ -55,6 +87,10 @@ export const ProductFormProvider = ({
           setImages,
           appendImage,
           removeImage,
+          properties,
+          setProperties,
+          thumbnail,
+          setThumbnail,
           onSubmit: handleSubmit,
         }}
       >

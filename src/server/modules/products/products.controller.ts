@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import LocalFilesInterceptor from '../../interceptors/local-files.interceptor';
 import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsService } from './product.service';
+import { ProductsService } from './products.service';
 
 @Controller('api/products')
 export class ProductsController {
@@ -22,7 +22,8 @@ export class ProductsController {
 
   @Post()
   async createProduct(@Body() dto: CreateProductDto) {
-    console.log(dto);
+    const product = await this.productsService.saveProduct(dto);
+    return product;
   }
 
   @Post('upload')

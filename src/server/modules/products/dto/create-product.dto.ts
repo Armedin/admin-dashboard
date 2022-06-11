@@ -1,7 +1,19 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
-  @IsOptional()
   @IsString()
-  readonly language: string;
+  readonly title: string;
+
+  @IsString()
+  readonly description: string;
+
+  @IsString()
+  readonly thumbnail: string;
+
+  @IsNumber()
+  readonly price: number;
+
+  readonly properties?: { name: string; value: string }[];
+
+  readonly images?: string[];
 }
