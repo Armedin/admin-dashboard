@@ -18,4 +18,9 @@ export class ProductsService {
 
     return product;
   }
+
+  async findAllProducts(): Promise<Product[]> {
+    const products = await this.productRepository.find();
+    return products;
+  }
 }

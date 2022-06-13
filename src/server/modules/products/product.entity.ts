@@ -21,7 +21,7 @@ export class Product {
   @Column()
   thumbnail: string;
 
-  @Column()
+  @Column('decimal', { precision: 16, scale: 2 })
   price: number;
 
   @Column('json')

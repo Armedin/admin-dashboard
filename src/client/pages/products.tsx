@@ -1,5 +1,5 @@
 import { Button } from '@/components/base';
-import { Card, CardHeader, CardContent } from '@kukui/ui';
+import { Card, CardHeader, CardContent, Badge } from '@kukui/ui';
 
 import {
   Box,
@@ -13,70 +13,31 @@ import {
   Typography,
 } from '@kukui/ui';
 import { MagnifyingGlass } from '@kukui/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { productService } from '@/services';
+import Image from 'next/image';
+import styled from '@emotion/styled';
+import {
+  displayAmount,
+  displayUnitPrice,
+  formatAmountWithSymbol,
+} from '@/utils/prices';
 
 interface Data {
-  name: string;
+  title: string;
   thumbnail: string;
   sku: number;
   quantity: number;
-  price: string | number;
+  price: number;
   status: string;
 }
 
-function createData(
-  name: string,
-  thumbnail: string,
-  sku: number,
-  quantity: number,
-  price: string | number,
-  status: string
-) {
-  return { name, thumbnail, sku, quantity, price, status };
-}
-
-const rows = [
-  createData(
-    'Frozen yoghurt',
-    'https://preview.keenthemes.com/metronic8/demo14/assets/media/stock/ecommerce/1.gif',
-    4708006,
-    6,
-    24,
-    'active'
-  ),
-  createData(
-    'Ice cream sandwich',
-    'https://preview.keenthemes.com/metronic8/demo14/assets/media/stock/ecommerce/2.gif',
-    2828008,
-    9,
-    37,
-    'active'
-  ),
-  createData(
-    'Eclair',
-    'https://preview.keenthemes.com/metronic8/demo14/assets/media/stock/ecommerce/3.gif',
-    4598005,
-    16,
-    24,
-    'active'
-  ),
-  createData(
-    'Cupcake',
-    'https://preview.keenthemes.com/metronic8/demo14/assets/media/stock/ecommerce/4.gif',
-    1775005,
-    3,
-    67,
-    'active'
-  ),
-  createData(
-    'Gingerbread',
-    'https://preview.keenthemes.com/metronic8/demo14/assets/media/stock/ecommerce/5.gif',
-    3433009,
-    16,
-    49,
-    'active'
-  ),
-];
+const ThumbnailImage = styled(Image)({
+  background: '#f5f8fa',
+  objectFit: 'cover',
+  borderRadius: '.475rem',
+});
 
 const headCells = [
   {
@@ -129,6 +90,14 @@ function getComparator<Key extends keyof any>(
 const Products = () => {
   const [orderDirection, setOrderDirection] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<undefined | keyof Data>(undefined);
+  const [products, setProducts] = useState<Data[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    productService.getAllProducts().then(res => {
+      setProducts(res);
+    });
+  }, []);
 
   const onSortableClick = (key: keyof Data) => {
     const isAsc = orderBy === key && orderDirection === 'asc';
@@ -145,7 +114,9 @@ const Products = () => {
             prefix={<MagnifyingGlass fontSize="sm" />}
           />
         </Box>
-        <Button color="primary">Add Product</Button>
+        <Button color="primary" onClick={() => router.push('/products/add')}>
+          Add Product
+        </Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -159,7 +130,6 @@ const Products = () => {
                   {cell.sortable ? (
                     <TableSortableLabel
                       onClick={() => onSortableClick(cell.id as any)}
-                      active={cell.id === orderBy}
                       direction={orderBy === cell.id ? orderDirection : 'asc'}
                     >
                       {cell.label}
@@ -172,39 +142,43 @@ const Products = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice()
-              .sort(getComparator(orderDirection, orderBy))
-              .map(row => (
-                <TableRow
-                  key={row.sku}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <img
-                        src={row.thumbnail}
-                        style={{
-                          background: '#f5f8fa',
-                          width: '48px',
-                          height: '48px',
-                          objectFit: 'cover',
-                          borderRadius: '.475rem',
-                        }}
-                      />
-                      <Typography
-                        sx={{ marginLeft: '1rem', fontSize: '0.85rem' }}
-                      >
-                        {row.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">{row.sku}</TableCell>
-                  <TableCell align="right">{row.quantity}</TableCell>
-                  <TableCell align="right">{row.price}</TableCell>
-                  <TableCell align="right">{row.status}</TableCell>
-                </TableRow>
-              ))}
+            {products.sort(getComparator(orderDirection, orderBy)).map(row => (
+              <TableRow
+                key={row.sku}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <ThumbnailImage
+                      src={`/upload/${row.thumbnail}`}
+                      loading="lazy"
+                      layout="fixed"
+                      width={48}
+                      height={48}
+                    />
+
+                    <Typography
+                      sx={{ marginLeft: '1rem', fontSize: '0.85rem' }}
+                    >
+                      {row.title}
+                    </Typography>
+                  </Box>
+                </TableCell>
+                <TableCell align="right">----</TableCell>
+                <TableCell align="right">--</TableCell>
+                <TableCell align="right">
+                  <Typography sx={{ fontWeight: 600, fontSize: '0.825rem' }}>
+                    {formatAmountWithSymbol({
+                      amount: row.price,
+                      currency: 'EUR',
+                    })}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Badge color="success" content="Published" />
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </CardContent>

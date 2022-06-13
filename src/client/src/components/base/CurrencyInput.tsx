@@ -1,13 +1,15 @@
 import { currencies } from '@/utils/currencies';
-import { normalizeAmount } from '@/utils/prices';
+import { getDecimalDigits, normalizeAmount } from '@/utils/prices';
 import {
   CurrencyInput as KukuiCurrencyInput,
   CurrencyInputProps as KukuiCurrencyInputProps,
 } from '@kukui/ui';
 import { useEffect, useRef, useState } from 'react';
 
-interface CurrencyInputProps extends Omit<KukuiCurrencyInputProps, 'value'> {
+interface CurrencyInputProps
+  extends Omit<KukuiCurrencyInputProps, 'value' | 'onChange'> {
   amount?: number;
+  onChange?: (amount: number) => void;
 }
 
 const getCurrencyInfo = (currencyCode: string) => {
@@ -18,7 +20,7 @@ const getCurrencyInfo = (currencyCode: string) => {
 const currencyInfo = getCurrencyInfo('EUR');
 
 const CurrencyInput = (props: CurrencyInputProps) => {
-  const { amount, ...other } = props;
+  const { amount, onChange, ...other } = props;
 
   const [value, setValue] = useState<string | undefined>();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -29,12 +31,27 @@ const CurrencyInput = (props: CurrencyInputProps) => {
     }
   }, [amount]);
 
+  const handleValueChange = value => {
+    let persistedAmount: number | undefined = undefined;
+
+    if (!value) {
+      value = 0;
+    }
+
+    const amount = parseFloat(value);
+    const multiplier = getDecimalDigits(currencyInfo.code);
+    persistedAmount = multiplier * amount;
+
+    if (onChange) onChange(persistedAmount);
+  };
+
   return (
     <KukuiCurrencyInput
       ref={inputRef}
       prefix={<div>{currencyInfo.symbol}</div>}
       decimalScale={currencyInfo.decimal_digits}
       value={value}
+      onValueChange={handleValueChange}
       {...other}
     />
   );

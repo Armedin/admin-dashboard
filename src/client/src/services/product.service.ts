@@ -5,6 +5,11 @@ const createProduct = (data: CreateProduct) => {
   return apiAxios.post('/products', data);
 };
 
+const getAllProducts = () => {
+  return apiAxios.get('/products');
+};
+
 export const productService = {
   createProduct,
+  getAllProducts,
 };

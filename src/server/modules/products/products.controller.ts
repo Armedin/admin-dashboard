@@ -17,7 +17,8 @@ export class ProductsController {
 
   @Get('')
   async getProducts() {
-    return 'ok';
+    const products = await this.productsService.findAllProducts();
+    return products;
   }
 
   @Post()

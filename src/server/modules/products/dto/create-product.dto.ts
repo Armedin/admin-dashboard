@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDecimal, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -10,7 +10,7 @@ export class CreateProductDto {
   @IsString()
   readonly thumbnail: string;
 
-  @IsNumber()
+  @IsDecimal()
   readonly price: number;
 
   readonly properties?: { name: string; value: string }[];

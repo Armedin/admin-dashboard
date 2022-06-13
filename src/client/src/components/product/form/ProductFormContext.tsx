@@ -1,5 +1,5 @@
 import { ProductProperty } from '@/interfaces/product';
-import { FormContainer } from '@kukui/ui';
+import { FormContainer, useFormContext } from '@kukui/ui';
 import React, { useEffect, useState } from 'react';
 
 const ProductFormContext = React.createContext<{
@@ -102,5 +102,6 @@ export const ProductFormProvider = ({
 
 export const useProductForm = () => {
   const context = React.useContext(ProductFormContext);
-  return context;
+  const form = useFormContext();
+  return { ...form, ...context };
 };

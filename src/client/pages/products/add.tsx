@@ -9,13 +9,14 @@ import {
   useSnackbar,
 } from '@kukui/ui';
 import styled from '@emotion/styled';
-import { Button, CurrencyInput, ImageUpload } from '@/components/base';
-import Discount from '@/components/product/Discount';
+import { Button } from '@/components/base';
 import Images from '@/components/product/Images';
 import { ProductFormProvider } from '@/components/product/form/ProductFormContext';
 import { productService, uploadService } from '@/services';
 import Properties from '@/components/product/Properties';
 import ProductAside from '@/components/product/Aside';
+import { useRouter } from 'next/router';
+import Pricing from '@/components/product/Pricing';
 
 const ProductDetails = styled(Box)({
   flex: '1 1 100%',
@@ -26,6 +27,7 @@ const ProductDetails = styled(Box)({
 
 const AddProductPage = () => {
   const [openSnackbar] = useSnackbar();
+  const router = useRouter();
 
   const handleSubmit = async (formData: any) => {
     const uploadedImages = await uploadService
@@ -50,7 +52,13 @@ const AddProductPage = () => {
       images: uploadedImages,
     };
 
-    await productService.createProduct(newData);
+    await productService
+      .createProduct(newData)
+      .then(() => {
+        openSnackbar('Product added successfully');
+        router.push('/products');
+      })
+      .catch(() => openSnackbar('An unknown error has occurred'));
   };
 
   return (
@@ -87,22 +95,7 @@ const AddProductPage = () => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Pricing</CardTitle>
-            </CardHeader>
-            <CardContent sx={{ paddingTop: 0 }}>
-              <Box sx={{ marginBottom: '2rem' }}>
-                <CurrencyInput
-                  name="price"
-                  label="Product Price"
-                  placeholder="Product price"
-                  required
-                />
-              </Box>
-              <Discount />
-            </CardContent>
-          </Card>
+          <Pricing />
 
           <Images />
 
