@@ -3,9 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProductCategory } from '../product-categories/product-category.entity';
 
 @Entity()
 export class Product {
@@ -37,4 +42,13 @@ export class Product {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => ProductCategory, productCategory => productCategory.products)
+  @JoinColumn({ name: 'category_id' })
+  category?: ProductCategory;
+
+  @RelationId((product: Product) => product.category)
+  @Column({ nullable: true })
+  @Index()
+  category_id?: string;
 }

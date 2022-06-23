@@ -15,7 +15,6 @@ export class ProductsService {
 
   async saveProduct(productDto: CreateProductDto): Promise<Product> {
     const product = await this.productRepository.save(productDto);
-
     return product;
   }
 

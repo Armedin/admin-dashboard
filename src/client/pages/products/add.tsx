@@ -17,6 +17,7 @@ import Properties from '@/components/product/Properties';
 import ProductAside from '@/components/product/Aside';
 import { useRouter } from 'next/router';
 import Pricing from '@/components/product/Pricing';
+import { useEffect } from 'react';
 
 const ProductDetails = styled(Box)({
   flex: '1 1 100%',
@@ -32,7 +33,7 @@ const AddProductPage = () => {
   const handleSubmit = async (formData: any) => {
     const uploadedImages = await uploadService
       .uploadFiles(formData.images.map(image => image.originalFile))
-      .then(data => {
+      .then((data: any) => {
         return data.uploads.map(({ url }) => url);
       });
 
@@ -102,7 +103,9 @@ const AddProductPage = () => {
           <Box
             sx={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}
           >
-            <Button size="small">Cancel</Button>
+            <Button size="small" onClick={() => router.push('/products')}>
+              Cancel
+            </Button>
             <Button color="primary" type="submit">
               Publish Product
             </Button>

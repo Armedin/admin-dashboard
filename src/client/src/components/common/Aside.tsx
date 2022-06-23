@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
+import { ChartNetwork, Shelves } from '@kukui/icons';
 import { Box } from '@kukui/ui';
-import Logo from './Logo';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import NavLink from './NavLink';
 
 const StyledAside = styled('div')`
   position: fixed;
@@ -49,23 +52,23 @@ const NavDesc = styled('span')({
   lineHeight: '1.5',
   opacity: 0.5,
 });
-const NavLink = styled('div')({
-  color: '#fff',
-  opacity: '0.8',
-  fontWeight: '500',
-  padding: '12px 24px',
-  width: '100%',
-  display: 'inline-block',
-  cursor: 'pointer',
 
-  '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
-    color: '#fff',
-    opacity: 1,
+const navLinks = [
+  {
+    name: 'Dashboard',
+    href: '/',
+    icon: <ChartNetwork />,
   },
-});
+  {
+    name: 'Products',
+    href: '/products',
+    icon: <Shelves />,
+  },
+];
 
 const Aside = () => {
+  const { pathname } = useRouter();
+
   return (
     <StyledAside>
       <Brand>
@@ -103,7 +106,12 @@ const Aside = () => {
           <NavTitle>Applications</NavTitle>
           <NavDesc>Navigate through applications</NavDesc>
         </NavItem>
-        <NavLink>Dashboard</NavLink>
+        {navLinks.map(navLink => (
+          <NavLink href={navLink.href} exact={navLink.href === '/'}>
+            {navLink.icon}
+            {navLink.name}
+          </NavLink>
+        ))}
       </Nav>
     </StyledAside>
   );

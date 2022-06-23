@@ -5,7 +5,7 @@ import { useProductForm } from './form/ProductFormContext';
 
 const Pricing = () => {
   const { getValues, setValue } = useProductForm();
-  setValue('price', 2000);
+
   return (
     <Card>
       <CardHeader>

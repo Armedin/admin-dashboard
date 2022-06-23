@@ -25,6 +25,7 @@ const defaultProduct = {
   thumbnail: '',
   price: '',
   images: [],
+  category_id: null,
   properties: [],
 };
 
