@@ -20,6 +20,7 @@ const Pricing = () => {
             onChange={amount => {
               setValue('price', amount);
             }}
+            amount={getValues('price')}
             required
           />
         </Box>

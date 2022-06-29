@@ -22,12 +22,13 @@ const currencyInfo = getCurrencyInfo('EUR');
 const CurrencyInput = (props: CurrencyInputProps) => {
   const { amount, onChange, ...other } = props;
 
-  const [value, setValue] = useState<string | undefined>();
+  const [value, setValue] = useState<string | undefined>('0.00');
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (currencyInfo && amount) {
       setValue(`${normalizeAmount(currencyInfo?.code, amount)}`);
+    } else {
     }
   }, [amount]);
 
@@ -41,6 +42,8 @@ const CurrencyInput = (props: CurrencyInputProps) => {
     const amount = parseFloat(value);
     const multiplier = getDecimalDigits(currencyInfo.code);
     persistedAmount = multiplier * amount;
+
+    setValue(`${value}`);
 
     if (onChange) onChange(persistedAmount);
   };

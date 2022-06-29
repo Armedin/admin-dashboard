@@ -1,3 +1,4 @@
+import { getUploadDir } from '@/utils';
 import { GripDotsVerticalSolid, TrashCan } from '@kukui/icons';
 import {
   Table,
@@ -14,7 +15,6 @@ import {
   IconButton,
   Radio,
 } from '@kukui/ui';
-import { useEffect } from 'react';
 import { ImageUpload } from '../base';
 import { useProductForm } from './form/ProductFormContext';
 
@@ -48,7 +48,7 @@ const Images = () => {
             <TableBody>
               {images.map(image => (
                 <TableRow
-                  key={image.preview}
+                  key={image.url}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell>
@@ -60,7 +60,11 @@ const Images = () => {
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <img
-                        src={image.preview}
+                        src={
+                          image.url.startsWith('blob')
+                            ? image.url
+                            : getUploadDir() + image.url
+                        }
                         style={{
                           width: '80px',
                           height: '80px',
@@ -87,10 +91,10 @@ const Images = () => {
                   <TableCell>
                     <Radio
                       name="selected-thumbnail"
-                      value={image.preview}
-                      selected={image.preview === thumbnail}
+                      value={image.url}
+                      selected={image.url === thumbnail}
                       onChange={() => {
-                        setThumbnail(image.preview);
+                        setThumbnail(image.url);
                       }}
                     />
                   </TableCell>
@@ -110,7 +114,7 @@ const Images = () => {
               files.map(file => {
                 const preview = URL.createObjectURL(file);
                 return {
-                  preview,
+                  url: preview,
                   name: file.name,
                   size: file.size,
                   originalFile: file,

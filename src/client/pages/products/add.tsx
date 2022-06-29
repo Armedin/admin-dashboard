@@ -1,30 +1,9 @@
-import {
-  Box,
-  Input,
-  Typography,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  useSnackbar,
-} from '@kukui/ui';
-import styled from '@emotion/styled';
-import { Button } from '@/components/base';
-import Images from '@/components/product/Images';
+import { Box, useSnackbar } from '@kukui/ui';
 import { ProductFormProvider } from '@/components/product/form/ProductFormContext';
 import { productService, uploadService } from '@/services';
-import Properties from '@/components/product/Properties';
 import ProductAside from '@/components/product/Aside';
 import { useRouter } from 'next/router';
-import Pricing from '@/components/product/Pricing';
-import { useEffect } from 'react';
-
-const ProductDetails = styled(Box)({
-  flex: '1 1 100%',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2rem',
-});
+import ProductForm from '@/components/product/form/ProductForm';
 
 const AddProductPage = () => {
   const [openSnackbar] = useSnackbar();
@@ -40,7 +19,7 @@ const AddProductPage = () => {
     let thumbnail = formData.thumbnail;
     if (thumbnail !== '') {
       const imageIndex = formData.images.findIndex(
-        image => thumbnail === image.preview
+        image => thumbnail === image.url
       );
       if (imageIndex !== -1 && uploadedImages.length - 1 >= imageIndex) {
         thumbnail = uploadedImages[imageIndex];
@@ -66,51 +45,7 @@ const AddProductPage = () => {
     <ProductFormProvider onSubmit={handleSubmit}>
       <Box sx={{ display: 'flex' }}>
         <ProductAside />
-
-        <ProductDetails>
-          <Card>
-            <CardHeader>
-              <CardTitle>General</CardTitle>
-            </CardHeader>
-            <CardContent sx={{ paddingTop: 0 }}>
-              <Box sx={{ marginBottom: '2rem' }}>
-                <Input
-                  label="Product Title"
-                  placeholder="Product title"
-                  name="title"
-                  helperText="A product title is required and recommended to be unique."
-                  required
-                />
-              </Box>
-              <Box sx={{ marginBottom: '2rem' }}>
-                <Input
-                  label="Product Description"
-                  placeholder="Product description"
-                  name="description"
-                  minRows={8}
-                  textarea
-                  required
-                />
-              </Box>
-              <Properties />
-            </CardContent>
-          </Card>
-
-          <Pricing />
-
-          <Images />
-
-          <Box
-            sx={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}
-          >
-            <Button size="small" onClick={() => router.push('/products')}>
-              Cancel
-            </Button>
-            <Button color="primary" type="submit">
-              Publish Product
-            </Button>
-          </Box>
-        </ProductDetails>
+        <ProductForm />
       </Box>
     </ProductFormProvider>
   );

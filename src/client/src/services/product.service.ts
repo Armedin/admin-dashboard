@@ -1,4 +1,4 @@
-import { CreateProduct } from '@/interfaces/product';
+import { CreateProduct, Product, UpdateProduct } from '@/interfaces/product';
 import {
   CreateProductCategory,
   ProductCategory,
@@ -10,7 +10,15 @@ const createProduct = (data: CreateProduct) => {
 };
 
 const getAllProducts = () => {
-  return apiAxios.get('/products');
+  return apiAxios.get<Product[], any>('/products');
+};
+
+const getProductById = (id: string) => {
+  return apiAxios.get<Product, any>(`/products/${id}`);
+};
+
+const updateProductById = (id: string, data: UpdateProduct) => {
+  return apiAxios.put<Product, any>(`/products/${id}`, data);
 };
 
 const getAllCategories = () => {
@@ -24,6 +32,8 @@ const createCategory = (data: CreateProductCategory) => {
 export const productService = {
   createProduct,
   getAllProducts,
+  getProductById,
   getAllCategories,
+  updateProductById,
   createCategory,
 };

@@ -2,7 +2,7 @@ import 'src/styles/globals.scss';
 import 'src/styles/font.scss';
 import dynamic from 'next/dynamic';
 import type { AppProps } from 'next/app';
-import Layout from '@/components/common/Layout';
+import Layout from '@/components/common/layout/Layout';
 import { useDarkMode } from '@/hooks';
 import { GlobalStyles, SnackbarProvider } from '@kukui/ui';
 

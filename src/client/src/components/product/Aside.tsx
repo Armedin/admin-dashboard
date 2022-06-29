@@ -12,19 +12,24 @@ import blankImage from '@/assets/images/placeholder/blank-image.svg';
 import { useEffect, useMemo, useState } from 'react';
 import { productService } from '@/services';
 import { ProductCategory } from '@/interfaces/product-category';
+import { Product } from '@/interfaces/product';
+import { getUploadDir } from '@/utils';
 
 const mapCategoryToOption = (category: ProductCategory) => ({
   value: category.id,
   label: category.title,
 });
 
-const ProductAside = () => {
-  const { images, thumbnail, setValue } = useProductForm();
+const ProductAside = ({ product }: { product?: Product }) => {
+  const { images, thumbnail, getValues, setValue } = useProductForm();
   const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const categoryId = getValues('category_id');
 
   const getThumbnail = useMemo(() => {
     if (thumbnail !== '') {
-      return thumbnail;
+      return thumbnail.startsWith('blob')
+        ? thumbnail
+        : getUploadDir() + thumbnail;
     }
 
     return blankImage.src;
@@ -44,6 +49,10 @@ const ProductAside = () => {
   const setNewCategory = (value: string) => {
     setValue('category_id', value);
   };
+
+  const options = useMemo(() => {
+    return categories.map(option => mapCategoryToOption(option));
+  }, [categories]);
 
   return (
     <Box
@@ -79,9 +88,10 @@ const ProductAside = () => {
         </CardHeader>
         <CardContent sx={{ paddingTop: 0 }}>
           <Select
+            value={options.find(option => option.value === categoryId)}
             label="Category"
             helperText="Add product to a category"
-            options={categories.map(option => mapCategoryToOption(option))}
+            options={options}
             onChange={(event, value) => setNewCategory(value)}
             onCreateOption={createNewCategory}
             isCreatable

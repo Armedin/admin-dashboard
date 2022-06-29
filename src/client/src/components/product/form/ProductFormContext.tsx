@@ -15,6 +15,7 @@ const ProductFormContext = React.createContext<{
 } | null>(null);
 
 interface ProductFormProviderProps {
+  product?: any;
   children?: React.ReactNode;
   onSubmit(data: any): void;
 }
@@ -30,6 +31,7 @@ const defaultProduct = {
 };
 
 export const ProductFormProvider = ({
+  product = defaultProduct,
   children,
   onSubmit,
 }: ProductFormProviderProps) => {
@@ -46,7 +48,7 @@ export const ProductFormProvider = ({
   };
 
   const removeImage = image => {
-    const idx = images.findIndex(img => img.preview === image.preview);
+    const idx = images.findIndex(img => img.url === image.url);
     if (idx !== -1) {
       images.splice(idx, 1);
     }
@@ -56,18 +58,29 @@ export const ProductFormProvider = ({
 
   useEffect(() => {
     if (thumbnail === '' && images.length) {
-      setThumbnail(images[0].preview);
+      setThumbnail(images[0].url);
     }
 
     if (
       (thumbnail !== '' &&
         images.length > 0 &&
-        images.findIndex(image => image.preview === thumbnail) === -1) ||
+        images.findIndex(image => image.url === thumbnail) === -1) ||
       images.length === 0
     ) {
       setThumbnail('');
     }
   }, [images, thumbnail]);
+
+  useEffect(() => {
+    if (!product) {
+      return;
+    }
+
+    // Map product images (string[]) to ({url: string}[])
+    setImages(product.images ? product.images.map(img => ({ url: img })) : []);
+    setProperties(product.properties || []);
+    setThumbnail(product.thumbnail || '');
+  }, [product]);
 
   const handleSubmit = data => {
     onSubmit({
@@ -81,7 +94,7 @@ export const ProductFormProvider = ({
   };
 
   return (
-    <FormContainer defaultValues={defaultProduct} onSuccess={handleSubmit}>
+    <FormContainer defaultValues={product} onSuccess={handleSubmit}>
       <ProductFormContext.Provider
         value={{
           images,

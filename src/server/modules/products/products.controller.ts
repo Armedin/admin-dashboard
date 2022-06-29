@@ -3,12 +3,15 @@ import {
   Controller,
   Post,
   Get,
+  Param,
   UseInterceptors,
   BadRequestException,
   UploadedFiles,
+  Put,
 } from '@nestjs/common';
 import LocalFilesInterceptor from '../../interceptors/local-files.interceptor';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 
 @Controller('api/products')
@@ -21,9 +24,27 @@ export class ProductsController {
     return products;
   }
 
+  @Get(':id')
+  async getProductById(@Param('id') productId: string) {
+    const product = await this.productsService.findProductById(productId);
+    return product;
+  }
+
   @Post()
   async createProduct(@Body() dto: CreateProductDto) {
     const product = await this.productsService.saveProduct(dto);
+    return product;
+  }
+
+  @Put(':id')
+  async updateProductById(
+    @Param('id') productId: string,
+    @Body() dto: UpdateProductDto
+  ) {
+    const product = await this.productsService.updateProductById(
+      productId,
+      dto
+    );
     return product;
   }
 
@@ -47,6 +68,5 @@ export class ProductsController {
         url: file.filename,
       })),
     };
-    // console.log(files);
   }
 }

@@ -1,5 +1,5 @@
 export interface UploadedImage {
-  preview: string;
+  url: string;
   name: string;
   size: string;
 }

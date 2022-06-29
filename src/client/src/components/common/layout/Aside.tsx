@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { ChartNetwork, Shelves } from '@kukui/icons';
+import { ChartNetwork, Shelves, Tags } from '@kukui/icons';
 import { Box } from '@kukui/ui';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import NavLink from './NavLink';
 
@@ -64,6 +63,11 @@ const navLinks = [
     href: '/products',
     icon: <Shelves />,
   },
+  {
+    name: 'Categories',
+    href: '/categories',
+    icon: <Tags />,
+  },
 ];
 
 const Aside = () => {
@@ -107,7 +111,11 @@ const Aside = () => {
           <NavDesc>Navigate through applications</NavDesc>
         </NavItem>
         {navLinks.map(navLink => (
-          <NavLink href={navLink.href} exact={navLink.href === '/'}>
+          <NavLink
+            key={navLink.name}
+            href={navLink.href}
+            exact={navLink.href === '/'}
+          >
             {navLink.icon}
             {navLink.name}
           </NavLink>
